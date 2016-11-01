@@ -1,0 +1,53 @@
+
+server {
+    listen 80;
+
+    server_name $NGINX_SERVER_NAME;
+    index index.php index.html index.htm;
+    root /src;
+
+    set $MAGE_ROOT /src;
+    set $MAGE_MODE "development";
+
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+
+    location ~* ^.+\.(jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|pdf|txt|tar|wav|bmp|rtf|js|flv|swf)$ {
+        root /src;
+    }
+
+    location / {
+        try_files $uri $uri/ @handler;
+    }
+
+    location /app/                { deny all; }
+    location /includes/           { deny all; }
+    location /lib/                { deny all; }
+    location /media/downloadable/ { deny all; }
+    location /pkginfo/            { deny all; }
+    location /report/config.xml   { deny all; }
+    location /var/                { deny all; }
+
+    location /. { return 404; }
+
+    location @handler {
+        rewrite / /index.php;
+    }
+
+    location ~ .php/ {
+        rewrite ^(.*.php)/ $1 last;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param MAGE_IS_DEVELOPER_MODE on;
+        fastcgi_param MAGE_RUN_CODE default;
+        fastcgi_param MAGE_RUN_TYPE store;
+    }
+}

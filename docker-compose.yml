@@ -1,0 +1,64 @@
+data:
+  build: ./docker/data
+  volumes:
+    - ./src:/src
+
+web:
+  build: ./docker/nginx
+  volumes_from:
+    - data
+  ports:
+    - "80:80"
+    - "443:443"
+  links:
+    - php
+  volumes:
+    - ./src:/src
+  environment:
+    - NGINX_SERVER_NAME=braspag.dev
+
+php:
+  build: ./docker/php
+  volumes_from:
+    - data
+  links:
+    - db:mysql
+    - cache:rediscache
+    - sessions:redissession
+    - fullpagecache:redisfullpagecache
+  volumes:
+    - ./src:/src
+    - ~/.composer:/root/.composer
+  environment:
+    - M2SETUP_DB_HOST=db
+    - M2SETUP_DB_NAME=mage
+    - M2SETUP_DB_USER=mage
+    - M2SETUP_DB_PASSWORD=mage
+    - M2SETUP_BASE_URL=http://braspag.dev/
+    - M2SETUP_ADMIN_FIRSTNAME=Admin
+    - M2SETUP_ADMIN_LASTNAME=User
+    - M2SETUP_ADMIN_EMAIL=dummy@gmail.com
+    - M2SETUP_ADMIN_USER=magento2
+    - M2SETUP_ADMIN_PASSWORD=magento2
+    - M2SETUP_USE_SAMPLE_DATA=false
+
+db:
+  image: mysql:5.7
+  environment:
+    MYSQL_ROOT_PASSWORD: mage
+    MYSQL_USER: mage
+    MYSQL_PASSWORD: mage
+    MYSQL_DATABASE: mage
+  # volumes:
+  #   - ./docker/magento/dump:/docker-entrypoint-initdb.d
+  expose:
+   - "3306"
+
+cache:
+  image: redis:latest
+
+fullpagecache:
+  image: redis:latest
+
+sessions:
+  image: redis:latest
