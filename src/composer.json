@@ -14,6 +14,10 @@
         "inchoostripe": {
             "type": "git",
             "url": "https://github.com/Inchoo/magento2-Inchoo_Stripe.git"
+        },
+        "magepal-gmailsmtpapp": {
+            "type": "git",
+            "url": "git@github.com:magepal/magento2-gmailsmtpapp.git"
         }
     },
     "require": {
@@ -40,10 +44,12 @@
         "magento/module-review-sample-data": "100.1.*",
         "magento/module-customer-balance-sample-data": "100.1.*",
         "magento/module-target-rule-sample-data": "100.1.*",
+        "magento/module-gift-registry-sample-data": "100.1.*",
         "magento/module-multiple-wishlist-sample-data": "100.1.*",
         "magento/module-swatches-sample-data": "100.1.*",
         "magento/sample-data-media": "100.1.*",
-        "magento/module-offline-shipping-sample-data": "100.1.*"
+        "magento/module-offline-shipping-sample-data": "100.1.*",
+        "ebizmarts/magento2-mandrill": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.0",
