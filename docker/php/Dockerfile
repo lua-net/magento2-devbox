@@ -46,6 +46,8 @@ RUN curl -sS https://getcomposer.org/installer | \
       --filename=composer \
       --version=1.1.2
 
+RUN export TERM=xterm
+
 WORKDIR /src
 
 COPY ./m2setup.sh /usr/local/bin/
